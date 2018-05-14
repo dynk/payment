@@ -33,9 +33,31 @@ async function login(req, res){
     return responseErrorJson(res, 'users::login', err);
   }
 }
+
+async function postCards(req, res){
+  try{
+    const response = await service.post(req);
+    return responseJson(res, response);
+  }catch(err) {
+    return responseErrorJson(res, 'users::get', err);
+  }
+}
+
+async function getCards(req, res){
+  try{
+    const response = await service.post(req);
+    return responseJson(res, response);
+  }catch(err) {
+    return responseErrorJson(res, 'users::get', err);
+  }
+}
+
+
 module.exports = {
   get,
+  getCards,
   getMyUser,
   login,
-  post
+  post,
+  postCards
 };

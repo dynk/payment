@@ -26,18 +26,10 @@ const WalletsSchema = new mongoose.Schema({
     trim: true
   },
   limit: {
-    type: Number,
-    required: true,
-    trim: true
+    type: Number
   },
-  availableLimit: {
-    type: Number,
-    required: true,
-    trim: true
-  },
-  wallet:{
-    type: Schema.Types.ObjectId,
-    ref: 'Wallets'
+  available: {
+    type: Number
   }
 });
 

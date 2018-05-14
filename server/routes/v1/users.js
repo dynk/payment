@@ -7,5 +7,7 @@ router.get('/', ctrl.get);
 router.get('/me', authenticate, ctrl.getMyUser);
 router.post('/', ctrl.post);
 router.post('/login', ctrl.login);
+router.post('/:id/cards', authenticate, ctrl.postCards);
+router.get('/:id/cards',authenticate,  ctrl.getCards);
 
 module.exports = router;

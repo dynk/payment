@@ -1,5 +1,6 @@
 
-const {UsersModel} = require('../../models/users');
+const { UsersModel } = require('../../models/users');
+const { WalletsModel } = require('../../models/wallets');
 const { pick } = require('ramda');
 const { findMissingFields } = require('../../utils/utils');
 
@@ -14,6 +15,8 @@ async function post(req = {}){
   const user = new UsersModel(userBody);
   try{
     await user.save();
+    const wallet = new WalletsModel({user: user.id});
+    await wallet.save();
     const token = await user.generateAuthToken();
     return {user, token};
   }catch(err){
