@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 function createConnection() {
   const logger = require('../utils/logger').create(`Mongo:${process.env.MONGODB_DATABASE_NAME}`);
   mongoose.Promise = Promise;
+  mongoose.set('debug', true);
   const mongoPathConnection = buildMongoPath();
   const options = buildOptions();
   return mongoose.connect(mongoPathConnection,options)
