@@ -1,7 +1,6 @@
 const { responseErrorJson, responseJson } = require('../utils/controllers-response');
 const service = require('../services/users/users');
 const { pick } = require('ramda');
-const logger = require('../utils/logger');
 
 async function get(req, res) {
   try{

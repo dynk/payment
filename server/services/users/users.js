@@ -7,16 +7,17 @@ function get() {
 }
 
 async function post(req = {}){
+
   const userBody = pick(['email', 'password'], req.body);
+
   const user = new UsersModel(userBody);
   try{
     await user.save();
+    const token = await user.generateAuthToken();
+    return {user, token};
   }catch(err){
     throw err.message;
   }
-
-  const token = await user.generateAuthToken();
-  return {user, token};
 }
 
 module.exports = {

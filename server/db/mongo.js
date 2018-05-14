@@ -1,30 +1,28 @@
-const { appConfig } = require('../config/environment');
 const mongoose = require('mongoose');
 
 
 function createConnection() {
-  const logger = require('../utils/logger').create(`Mongo:${appConfig.MONGODB_DATABASE_NAME}`);
+  const logger = require('../utils/logger').create(`Mongo:${process.env.MONGODB_DATABASE_NAME}`);
   mongoose.Promise = Promise;
-  const mongoPathConnection = buildMongoPath(appConfig);
+  const mongoPathConnection = buildMongoPath();
   const options = buildOptions();
   return mongoose.connect(mongoPathConnection,options)
-    .then(() => logger.info(`Connection to MONGODB ${appConfig.MONGODB_DATABASE_NAME} has been established successfully.`))
-    .catch((err) => logger.error(`Unable to connect to the database MONGODB "${appConfig.MONGODB_DATABASE_NAME}": ${err}`));
+    .then(() => logger.info(`Connection to MONGODB ${process.env.MONGODB_DATABASE_NAME} has been established successfully.`))
+    .catch((err) => logger.error(`Unable to connect to the database MONGODB "${mongoPathConnection}": ${err}`));
 
 }
 
-function buildMongoPath(appConfig){
+function buildMongoPath(){
   let authURI;
   let mongoPathConnection = 'mongodb://';
-  if(appConfig.MONGODB_USERNAME){
-    authURI = `${encodeURIComponent(appConfig.MONGODB_USERNAME)}:${encodeURIComponent(appConfig.MONGODB_PASSWORD)}`;
+  if(process.env.MONGODB_USERNAME !== undefined){
+    authURI = `${encodeURIComponent(process.env.MONGODB_USERNAME)}:${encodeURIComponent(process.env.MONGODB_PASSWORD)}`;
   }
   if(authURI){
     mongoPathConnection += `${authURI}@`;
   }
-  mongoPathConnection += `${appConfig.MONGODB_URI}:${appConfig.MONGODB_PORT}/${appConfig.MONGODB_DATABASE_NAME}`;
+  mongoPathConnection += `${process.env.MONGODB_URI}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DATABASE_NAME}`;
   return mongoPathConnection;
-//   return 'mongodb://localhost/gust';
 }
 
 function buildOptions(){
