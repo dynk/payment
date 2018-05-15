@@ -2,8 +2,6 @@
 const { WalletsModel } = require('../../models/wallets');
 const moment = require('moment');
 const R = require('ramda');
-// const { pick } = require('ramda');
-// const { findMissingFields } = require('../../utils/utils');
 
 function get() {
   return WalletsModel.find();

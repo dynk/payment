@@ -4,6 +4,7 @@ const { WalletsModel } = require('../../models/wallets');
 const { CardsModel } = require('../../models/cards');
 const { pick } = require('ramda');
 const { findMissingFields } = require('../../utils/utils');
+const { PropertyRequiredError } = require('../../utils/errors');
 const serviceWallet = require('../wallets/wallets');
 
 function get() {
@@ -27,13 +28,22 @@ async function getCards(req = {}) {
 
 
 async function pay(req = {}){
-  const options = {
-    _id: req.params.walletId,
-    user: req.params.id
-  };
-  const { amount } = req.body;
-  const wallet = await WalletsModel.findOne(options).populate('cards');
-  return serviceWallet.pay({wallet, amount});
+
+  try{
+    const { amount } = req.body;
+    if(!amount){
+      throw new PropertyRequiredError('amount');
+    }
+    const options = {
+      _id: req.params.walletId,
+      user: req.params.id
+    };
+    const wallet = await WalletsModel.findOne(options).populate('cards');
+    return serviceWallet.pay({wallet, amount});
+  }catch(err){
+    return Promise.reject(err);
+  }
+
   // return serviceWallet.selectCardsWithLimit(wallet);
 }
 
