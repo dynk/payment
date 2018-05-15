@@ -1,5 +1,5 @@
 
-const {WalletsModel} = require('../../models/wallets');
+const { WalletsModel } = require('../../models/wallets');
 // const { pick } = require('ramda');
 // const { findMissingFields } = require('../../utils/utils');
 
@@ -22,7 +22,14 @@ async function post(req = {}){
   }
 }
 
+
+
+function destroy(req = {}){
+  return WalletsModel.findByIdAndDelete(req.params.id);
+}
+
 module.exports = {
+  destroy,
   get,
   post
 };

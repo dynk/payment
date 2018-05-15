@@ -1,0 +1,18 @@
+version: "2"
+services:
+  app:
+    container_name: payment
+    restart: always
+    build: .
+    ports:
+      - "3020:3020"
+    links:
+      - mongo
+  mongo:
+    container_name: mongo
+    image: mongo:3.5
+    command: mongod --port 27017 --bind_ip_all
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"

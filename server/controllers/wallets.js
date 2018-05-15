@@ -1,6 +1,7 @@
 const { responseErrorJson, responseJson } = require('../utils/controllers-response');
 const service = require('../services/wallets/wallets');
 const { pick } = require('ramda');
+const HttpStatus = require('http-status-codes');
 
 async function get(req, res) {
   try{
@@ -11,12 +12,10 @@ async function get(req, res) {
   }
 }
 
-
-
 async function destroy(req, res) {
   try{
-    const response = await service.destroy(req);
-    return responseJson(res, response.map(pick(['email', 'name'])));
+    await service.destroy(req);
+    return responseJson(res, null, HttpStatus.NO_CONTENT);
   }catch(err){
     return responseErrorJson(res, 'wallets::delete', err);
   }

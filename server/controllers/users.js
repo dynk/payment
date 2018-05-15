@@ -1,4 +1,5 @@
 const { responseErrorJson, responseJson } = require('../utils/controllers-response');
+const HttpStatus = require('http-status-codes');
 const service = require('../services/users/users');
 const { pick } = require('ramda');
 
@@ -18,7 +19,7 @@ function getMyUser(req, res){
 async function post(req, res) {
   try{
     const response = await service.post(req);
-    return responseJson(res, response);
+    return responseJson(res, response, HttpStatus.CREATED);
   }catch(err) {
     return responseErrorJson(res, 'users::get', err);
   }
@@ -37,7 +38,7 @@ async function login(req, res){
 async function postCards(req, res){
   try{
     const response = await service.postCards(req);
-    return responseJson(res, response);
+    return responseJson(res, response, HttpStatus.CREATED);
   }catch(err) {
     return responseErrorJson(res, 'users::postCards', err);
   }
@@ -46,7 +47,7 @@ async function postCards(req, res){
 async function postWallets(req, res){
   try{
     const response = await service.postWallets(req);
-    return responseJson(res, response);
+    return responseJson(res, response, HttpStatus.CREATED);
   }catch(err) {
     return responseErrorJson(res, 'users::postWallets', err);
   }
