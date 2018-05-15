@@ -35,7 +35,7 @@ describe('Wallets servicews', () => {
         available: 1000
       };
       const amount = 900;
-      service.isPayable(wallet, amount)
+      service.isBuyable({wallet, amount})
         .then(assert)
         .catch(()=>assert(false));
     });
@@ -45,7 +45,7 @@ describe('Wallets servicews', () => {
         available: 1000
       };
       const amount = 900;
-      service.isPayable(wallet, amount)
+      service.isBuyable({wallet, amount})
         .then(assert)
         .catch(()=>assert(false));
     });
@@ -55,7 +55,7 @@ describe('Wallets servicews', () => {
         available: 1000
       };
       const amount = 1200;
-      service.isPayable(wallet, amount)
+      service.isBuyable({wallet, amount})
         .catch((err) => assert(err instanceof Error));
     });
 
@@ -64,7 +64,7 @@ describe('Wallets servicews', () => {
         available: 1000
       };
       const amount = 1200;
-      service.isPayable(wallet, amount)
+      service.isBuyable({wallet, amount})
         .catch((err) => assert(err instanceof Error));
     });
 

@@ -16,12 +16,21 @@ function getMyUser(req, res){
   return responseJson(res, pick(['email', 'name'], req.user));
 }
 
+async function buy(req, res) {
+  try{
+    const response = await service.buy(req);
+    return responseJson(res, response, HttpStatus.CREATED);
+  }catch(err) {
+    return responseErrorJson(res, 'users::buy', err);
+  }
+}
+
 async function pay(req, res) {
   try{
     const response = await service.pay(req);
     return responseJson(res, response, HttpStatus.CREATED);
   }catch(err) {
-    return responseErrorJson(res, 'users::pay', err);
+    return responseErrorJson(res, 'users::buy', err);
   }
 }
 
@@ -88,6 +97,7 @@ module.exports = {
   getWallets,
   getMyUser,
   login,
+  buy,
   pay,
   post,
   postCards,

@@ -28,7 +28,6 @@ async function getCards(req = {}) {
 
 
 async function pay(req = {}){
-
   try{
     const { amount } = req.body;
     if(!amount){
@@ -43,8 +42,22 @@ async function pay(req = {}){
   }catch(err){
     return Promise.reject(err);
   }
-
-  // return serviceWallet.selectCardsWithLimit(wallet);
+}
+async function buy(req = {}){
+  try{
+    const { amount } = req.body;
+    if(!amount){
+      throw new PropertyRequiredError('amount');
+    }
+    const options = {
+      _id: req.params.walletId,
+      user: req.params.id
+    };
+    const wallet = await WalletsModel.findOne(options).populate('cards');
+    return serviceWallet.buy({wallet, amount});
+  }catch(err){
+    return Promise.reject(err);
+  }
 }
 
 async function post(req = {}){
@@ -127,6 +140,7 @@ module.exports = {
   getCards,
   getWallets,
   login,
+  buy,
   pay,
   post,
   postCards,

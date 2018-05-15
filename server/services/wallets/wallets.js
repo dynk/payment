@@ -27,23 +27,24 @@ function destroy(req = {}){
 }
 
 function pay({wallet , amount}){
-  return new Promise((resolve, reject) =>{
-    return isPayable({wallet,amount})
-      .then(selectAndOrderCardsWithLimit)
-      .then((ordCards) => selectAndDistributePayCards(ordCards,amount))
-      .then((payCards) => savePayment({wallet, payCards, amount}) )
-      // .then(selectCardsWithLimit)
-      .then(resolve)
-      .catch(reject);
+  const { cards } = wallet;
+  const selectedCards = selectAndDistributePayCards(orderCards(cards),amount);
+  return savePayCards({wallet, selectedCards, amount});
 
-  });
-  // if(isPayable(wallet)){
-  //   return Promise.resolve(true);
-  // }
-  // return Promise.reject(new RangeError('Insuficient funds!'));
 }
 
-function isPayable({wallet , amount}){
+function buy({wallet , amount}){
+  return new Promise((resolve, reject) =>{
+    return isBuyable({wallet,amount})
+      .then(selectAndOrderCardsWithLimit)
+      .then((ordCards) => selectAndDistributeBuyCards(ordCards,amount))
+      .then((selectedCards) => saveBuyCards({wallet, selectedCards, amount}) )
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
+function isBuyable({wallet , amount}){
   if(wallet.available > amount){
     return Promise.resolve(wallet);
   }
@@ -60,7 +61,7 @@ function selectAndOrderCardsWithLimit(wallet){
   return R.compose(filter,orderCards)(cards);
 }
 
-function selectAndDistributePayCards(cards, amount){
+function selectAndDistributeBuyCards(cards, amount){
   const result = [];
   for(const card of cards){
     if(amount <= 0){
@@ -78,9 +79,30 @@ function selectAndDistributePayCards(cards, amount){
   return result;
 }
 
+function selectAndDistributePayCards(cards, amount){
+  const result = [];
+  let rest;
+  for(const card of cards){
+    if(amount <= 0){
+      return result;
+    }
+    rest = card.limit - card.available;
+    if(rest <= amount){
+      card.available += rest;
+      amount -= rest;
+    }else{
+      card.available += amount;
+      amount = 0;
+    }
+    result.push(card);
+  }
+  return result;
+}
+
 function orderCards(cards){
   // const { cards } = wallet;
   let todayDate = moment().date();
+  // TODO - remove
   todayDate = 2;
   const dateAndLimitsort = R.sortWith([
     R.ascend(R.prop('limit')),
@@ -96,19 +118,37 @@ function orderCards(cards){
   return dateAndLimitsort(cards);
 }
 
-function savePayment({wallet, payCards, amount}){
+function saveBuyCards({wallet, buyCards, amount}){
+  if(!Array.isArray(buyCards)){
+    buyCards = [buyCards];
+  }
   wallet.available -= amount;
   return wallet.save()
-    .then(() => Promise.all(payCards.map(c => c.save())));
-  // return Promise.all(payCards.map(c => c.save));
+    .then(() => Promise.all(buyCards.map(c => c.save())));
 }
+
+function savePayCards({wallet, selectedCards, amount}){
+  if(!Array.isArray(selectedCards)){
+    selectedCards = [selectedCards];
+  }
+  if(amount > wallet.limit){
+    wallet.available = wallet.limit;
+  }else{
+    wallet.available += amount;
+  }
+  return wallet.save()
+    .then(() => Promise.all(selectedCards.map(c => c.save())));
+}
+
+
 
 
 module.exports = {
   destroy,
   get,
+  buy,
   pay,
   post,
-  isPayable,
+  isBuyable,
   orderCards
 };
