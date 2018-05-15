@@ -11,10 +11,12 @@ const WalletsSchema = new mongoose.Schema({
     ref: 'Cards'
   }],
   limit: {
-    type: Number
+    type: Number,
+    default: 0
   },
   available: {
-    type: Number
+    type: Number,
+    default: 0
   }
 });
 

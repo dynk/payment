@@ -9,12 +9,15 @@ function get() {
   return UsersModel.find();
 }
 
-function getCards(req = {}) {
+async function getCards(req = {}) {
   const { user } = req;
-  // const wallet = await WalletsModel.find({user: user.id});
-  return WalletsModel.find({user: user.id}).populate('cards');
+  try{
+    const wallet = await WalletsModel.findOne({user: user.id}).populate('cards');
+    return wallet.cards;
+  }catch(err){
+    throw err;
+  }
 }
-
 
 async function post(req = {}){
 
@@ -25,29 +28,49 @@ async function post(req = {}){
   const user = new UsersModel(userBody);
   try{
     await user.save();
-    const wallet = new WalletsModel({user: user.id});
-    await wallet.save();
     const token = await user.generateAuthToken();
     return {user, token};
   }catch(err){
-    throw err.message;
+    throw err;
   }
 }
 
 async function postCards(req = {}){
 
   const { user } = req;
-  const cardBody = pick(['number', 'holder', 'cvv','expirationDate','limit'], req.body);
+  const { walletId } = req.params;
+  const cardBody = pick(['number', 'holder', 'cvv','expirationDate','limit','payDay'], req.body);
   const card = new CardsModel(cardBody);
   try{
     await card.save();
-    await WalletsModel.update(
-      {user: user.id},
-      {'$push' : { 'cards' : card.id } }
+    const wallet = await WalletsModel.findOne({_id: walletId});
+    const walletAvailable = wallet.available + card.limit;
+    const walletLimit = wallet.limit + card.limit;
+    await WalletsModel.update({
+      _id: walletId,
+      user: user.id
+    },
+    {
+      '$push' :{ 'cards' : card.id },
+      limit: walletLimit,
+      available: walletAvailable
+    }
     );
     return card;
   }catch(err){
-    throw err.message;
+    throw err;
+  }
+}
+
+
+async function postWallets(req = {}){
+  const { user } = req;
+  const wallet = new WalletsModel({user: user.id});
+  try{
+    await wallet.save();
+    return wallet;
+  }catch(err){
+    throw err;
   }
 }
 
@@ -66,7 +89,7 @@ async function login(req = {}){
     const token = await user.generateAuthToken();
     return {token, user};
   }catch(err){
-    return Promise.reject(err);
+    throw err;
   }
 }
 
@@ -75,5 +98,6 @@ module.exports = {
   getCards,
   login,
   post,
-  postCards
+  postCards,
+  postWallets
 };

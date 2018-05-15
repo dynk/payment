@@ -39,9 +39,19 @@ async function postCards(req, res){
     const response = await service.postCards(req);
     return responseJson(res, response);
   }catch(err) {
-    return responseErrorJson(res, 'users::get', err);
+    return responseErrorJson(res, 'users::postCards', err);
   }
 }
+
+async function postWallets(req, res){
+  try{
+    const response = await service.postWallets(req);
+    return responseJson(res, response);
+  }catch(err) {
+    return responseErrorJson(res, 'users::postWallets', err);
+  }
+}
+
 
 async function getCards(req, res){
   try{
@@ -59,5 +69,6 @@ module.exports = {
   getMyUser,
   login,
   post,
-  postCards
+  postCards,
+  postWallets
 };

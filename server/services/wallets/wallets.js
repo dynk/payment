@@ -1,5 +1,5 @@
 
-const {WalletsModel} = require('../../models/users');
+const {WalletsModel} = require('../../models/wallets');
 // const { pick } = require('ramda');
 // const { findMissingFields } = require('../../utils/utils');
 

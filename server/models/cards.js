@@ -24,11 +24,19 @@ const CardsSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  payDay: {
+    type: Number,
+    required: true,
+    minlength: 1,
+    maxlength: 2
+  },
   limit: {
-    type: Number
+    type: Number,
+    required: true
   },
   available: {
-    type: Number
+    type: Number,
+    default: 0
   }
 });
 
