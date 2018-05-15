@@ -10,8 +10,10 @@ function get() {
 
 async function post(req = {}){
 
-  const userBody = pick(['email', 'password', 'name'], req.body);
-
+  const userBody = pick(['email', 'password', 'name','adminCode'], req.body);
+  if(userBody.adminCode && (userBody.adminCode === 'secretadmincode123')){
+    userBody.isAdmin = true;
+  }
   const user = new UsersModel(userBody);
   try{
     await user.save();

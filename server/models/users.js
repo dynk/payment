@@ -22,10 +22,14 @@ const UsersSchema = new mongoose.Schema({
     trim: true,
     minlength: 1
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   password: {
     type: String,
     require: true,
-    minlength: 6
+    minlength: 5
   },
   tokens: [{
     access: {
