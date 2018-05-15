@@ -1,6 +1,5 @@
 const { responseErrorJson, responseJson } = require('../utils/controllers-response');
 const service = require('../services/wallets/wallets');
-const { pick } = require('ramda');
 const HttpStatus = require('http-status-codes');
 
 async function get(req, res) {

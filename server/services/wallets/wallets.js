@@ -28,8 +28,16 @@ function destroy(req = {}){
   return WalletsModel.findByIdAndDelete(req.params.id);
 }
 
+function isPayable(wallet , amount){
+  if(wallet.available > amount){
+    return Promise.resolve(true);
+  }
+  return Promise.reject(new RangeError('Insuficient funds!'));
+}
+
 module.exports = {
   destroy,
   get,
-  post
+  post,
+  isPayable
 };

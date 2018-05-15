@@ -32,11 +32,13 @@ const CardsSchema = new mongoose.Schema({
   },
   limit: {
     type: Number,
-    required: true
+    required: true,
+    min:0
   },
   available: {
     type: Number,
-    default: 0
+    default: 0,
+    min:0
   }
 });
 

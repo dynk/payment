@@ -16,12 +16,21 @@ function getMyUser(req, res){
   return responseJson(res, pick(['email', 'name'], req.user));
 }
 
+async function pay(req, res) {
+  try{
+    const response = await service.pay(req);
+    return responseJson(res, response, HttpStatus.CREATED);
+  }catch(err) {
+    return responseErrorJson(res, 'users::pay', err);
+  }
+}
+
 async function post(req, res) {
   try{
     const response = await service.post(req);
     return responseJson(res, response, HttpStatus.CREATED);
   }catch(err) {
-    return responseErrorJson(res, 'users::get', err);
+    return responseErrorJson(res, 'users::post', err);
   }
 }
 
@@ -54,12 +63,21 @@ async function postWallets(req, res){
 }
 
 
+async function getWallets(req, res){
+  try{
+    const response = await service.getWallets(req);
+    return responseJson(res, response);
+  }catch(err) {
+    return responseErrorJson(res, 'users::getWallets', err);
+  }
+}
+
 async function getCards(req, res){
   try{
     const response = await service.getCards(req);
     return responseJson(res, response);
   }catch(err) {
-    return responseErrorJson(res, 'users::get', err);
+    return responseErrorJson(res, 'users::getCards', err);
   }
 }
 
@@ -67,8 +85,10 @@ async function getCards(req, res){
 module.exports = {
   get,
   getCards,
+  getWallets,
   getMyUser,
   login,
+  pay,
   post,
   postCards,
   postWallets

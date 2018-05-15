@@ -9,11 +9,33 @@ function get() {
   return UsersModel.find();
 }
 
+function getWallets(req = {}) {
+  const { user } = req;
+  return WalletsModel.find({user: user.id});
+}
+
 async function getCards(req = {}) {
   const { user } = req;
   try{
     const wallet = await WalletsModel.findOne({user: user.id}).populate('cards');
     return wallet.cards;
+  }catch(err){
+    throw err;
+  }
+}
+
+
+async function pay(req = {}){
+
+  const userBody = pick(['email', 'password', 'name','adminCode'], req.body);
+  if(userBody.adminCode && (userBody.adminCode === 'secretadmincode123')){
+    userBody.isAdmin = true;
+  }
+  const user = new UsersModel(userBody);
+  try{
+    await user.save();
+    const token = await user.generateAuthToken();
+    return {user, token};
   }catch(err){
     throw err;
   }
@@ -40,6 +62,7 @@ async function postCards(req = {}){
   const { user } = req;
   const { walletId } = req.params;
   const cardBody = pick(['number', 'holder', 'cvv','expirationDate','limit','payDay'], req.body);
+  cardBody.available = cardBody.limit;
   const card = new CardsModel(cardBody);
   try{
     await card.save();
@@ -96,7 +119,9 @@ async function login(req = {}){
 module.exports = {
   get,
   getCards,
+  getWallets,
   login,
+  pay,
   post,
   postCards,
   postWallets
