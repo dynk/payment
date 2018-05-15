@@ -1,12 +1,20 @@
 
 const { UsersModel } = require('../../models/users');
 const { WalletsModel } = require('../../models/wallets');
+const { CardsModel } = require('../../models/cards');
 const { pick } = require('ramda');
 const { findMissingFields } = require('../../utils/utils');
 
 function get() {
   return UsersModel.find();
 }
+
+function getCards(req = {}) {
+  const { user } = req;
+  // const wallet = await WalletsModel.find({user: user.id});
+  return WalletsModel.find({user: user.id}).populate('cards');
+}
+
 
 async function post(req = {}){
 
@@ -25,6 +33,24 @@ async function post(req = {}){
     throw err.message;
   }
 }
+
+async function postCards(req = {}){
+
+  const { user } = req;
+  const cardBody = pick(['number', 'holder', 'cvv','expirationDate','limit'], req.body);
+  const card = new CardsModel(cardBody);
+  try{
+    await card.save();
+    await WalletsModel.update(
+      {user: user.id},
+      {'$push' : { 'cards' : card.id } }
+    );
+    return card;
+  }catch(err){
+    throw err.message;
+  }
+}
+
 
 async function login(req = {}){
 
@@ -46,6 +72,8 @@ async function login(req = {}){
 
 module.exports = {
   get,
+  getCards,
   login,
-  post
+  post,
+  postCards
 };

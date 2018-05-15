@@ -36,7 +36,7 @@ async function login(req, res){
 
 async function postCards(req, res){
   try{
-    const response = await service.post(req);
+    const response = await service.postCards(req);
     return responseJson(res, response);
   }catch(err) {
     return responseErrorJson(res, 'users::get', err);
@@ -45,7 +45,7 @@ async function postCards(req, res){
 
 async function getCards(req, res){
   try{
-    const response = await service.post(req);
+    const response = await service.getCards(req);
     return responseJson(res, response);
   }catch(err) {
     return responseErrorJson(res, 'users::get', err);

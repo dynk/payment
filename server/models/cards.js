@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const WalletsSchema = new mongoose.Schema({
+const CardsSchema = new mongoose.Schema({
   number: {
     type: Number,
     required: true,
@@ -34,6 +33,6 @@ const WalletsSchema = new mongoose.Schema({
 });
 
 
-const JobsModel = mongoose.model('Wallets', WalletsSchema);
+const CardsModel = mongoose.model('Cards', CardsSchema);
 
-module.exports = {JobsModel};
+module.exports = {CardsModel};
