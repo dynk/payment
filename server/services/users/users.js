@@ -4,6 +4,7 @@ const { WalletsModel } = require('../../models/wallets');
 const { CardsModel } = require('../../models/cards');
 const { pick } = require('ramda');
 const { findMissingFields } = require('../../utils/utils');
+const serviceWallet = require('../wallets/wallets');
 
 function get() {
   return UsersModel.find();
@@ -26,19 +27,14 @@ async function getCards(req = {}) {
 
 
 async function pay(req = {}){
-
-  const userBody = pick(['email', 'password', 'name','adminCode'], req.body);
-  if(userBody.adminCode && (userBody.adminCode === 'secretadmincode123')){
-    userBody.isAdmin = true;
-  }
-  const user = new UsersModel(userBody);
-  try{
-    await user.save();
-    const token = await user.generateAuthToken();
-    return {user, token};
-  }catch(err){
-    throw err;
-  }
+  const options = {
+    _id: req.params.walletId,
+    user: req.params.id
+  };
+  const { amount } = req.body;
+  const wallet = await WalletsModel.findOne(options).populate('cards');
+  return serviceWallet.pay({wallet, amount});
+  // return serviceWallet.selectCardsWithLimit(wallet);
 }
 
 async function post(req = {}){
