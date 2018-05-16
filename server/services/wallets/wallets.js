@@ -118,13 +118,13 @@ function orderCards(cards){
   return dateAndLimitsort(cards);
 }
 
-function saveBuyCards({wallet, buyCards, amount}){
-  if(!Array.isArray(buyCards)){
-    buyCards = [buyCards];
+function saveBuyCards({wallet, selectedCards, amount}){
+  if(!Array.isArray(selectedCards)){
+    selectedCards = [selectedCards];
   }
   wallet.available -= amount;
   return wallet.save()
-    .then(() => Promise.all(buyCards.map(c => c.save())));
+    .then(() => Promise.all(selectedCards.map(c => c.save())));
 }
 
 function savePayCards({wallet, selectedCards, amount}){
