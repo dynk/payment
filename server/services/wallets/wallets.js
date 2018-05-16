@@ -103,7 +103,7 @@ function orderCards(cards){
   // const { cards } = wallet;
   let todayDate = moment().date();
   // TODO - remove
-  todayDate = 2;
+  // todayDate = 2;
   const dateAndLimitsort = R.sortWith([
     R.ascend(R.prop('limit')),
     R.descend(R.prop('dueDate'))
