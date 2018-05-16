@@ -20,8 +20,6 @@ async function post(req = {}){
   }
 }
 
-
-
 function destroy(req = {}){
   return WalletsModel.findByIdAndDelete(req.params.id);
 }
