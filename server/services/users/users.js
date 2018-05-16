@@ -5,25 +5,28 @@ const { CardsModel } = require('../../models/cards');
 const { pick } = require('ramda');
 const { findMissingFields } = require('../../utils/utils');
 const { PropertyRequiredError } = require('../../utils/errors');
+const cardsService = require('../cards/cards');
 const serviceWallet = require('../wallets/wallets');
 
 function get() {
   return UsersModel.find();
 }
 
-function getWallets(req = {}) {
-  const { user } = req;
-  return WalletsModel.find({user: user.id});
-}
-
 async function getCards(req = {}) {
   const { user } = req;
   try{
     const wallet = await WalletsModel.findOne({user: user.id}).populate('cards');
-    return wallet.cards;
+    const { cards } = wallet;
+    return cardsService.decryptCard(cards);
   }catch(err){
     throw err;
   }
+  
+}
+
+function getWallets(req = {}) {
+  const { user } = req;
+  return WalletsModel.find({user: user.id});
 }
 
 
@@ -80,8 +83,14 @@ async function postCards(req = {}){
 
   const { user } = req;
   const { walletId } = req.params;
-  const cardBody = pick(['number', 'holder', 'cvv','expirationDate','limit','payDay'], req.body);
+  const requiredFields = ['number', 'holder', 'cvv','expirationDate','limit','payDay'];
+  const missingFields = findMissingFields(req.body, requiredFields);
+  if(missingFields && missingFields.length){
+    return Promise.reject(new PropertyRequiredError(missingFields));
+  }
+  const cardBody = pick(requiredFields, req.body);
   cardBody.available = cardBody.limit;
+  cardsService.encryptCard(cardBody);
   const card = new CardsModel(cardBody);
   try{
     await card.save();
@@ -98,7 +107,7 @@ async function postCards(req = {}){
       available: walletAvailable
     }
     );
-    return card;
+    return;
   }catch(err){
     throw err;
   }
@@ -124,7 +133,7 @@ async function login(req = {}){
   try{
     const missingFields = findMissingFields(body, requideFields);
     if(missingFields && missingFields.length){
-      throw new Error('missingFields');
+      throw new PropertyRequiredError(missingFields);
     }
     const userBody = pick(requideFields, req.body);
     const user = await UsersModel.findByCredentials(userBody.email, userBody.password);

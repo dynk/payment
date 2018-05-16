@@ -86,9 +86,10 @@ async function getCards(req, res){
     const response = await service.getCards(req);
     return responseJson(res, response);
   }catch(err) {
-    return responseErrorJson(res, 'users::getCards', err);
+    return responseErrorJson(res, 'users::getWallets', err);
   }
 }
+
 
 
 module.exports = {

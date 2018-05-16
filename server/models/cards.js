@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 
 const CardsSchema = new mongoose.Schema({
+  // encrypted
   number: {
-    type: Number,
+    type: String,
     required: true,
     trim: true,
     minlength: 8
@@ -13,8 +14,9 @@ const CardsSchema = new mongoose.Schema({
     trim: true,
     minlength: 1
   },
+  // encrypted
   cvv: {
-    type: Number,
+    type: String,
     required: true,
     trim: true,
     minlength: 3
